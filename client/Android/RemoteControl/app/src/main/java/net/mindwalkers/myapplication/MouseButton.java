@@ -13,23 +13,23 @@ public class MouseButton {
     public static final int RIGHT = 2;
     public static final int MIDDLE = 3;
 
-    private Context context;
+    private Context parent;
     private Button buttonObject;
     private int buttonType;
     private GestureDetector gestureDetector;
-    private static final String TAG = "MouseButton";
     private TextView debugTextView;
+    private boolean isLongPress;
 
-    public MouseButton(Context context, Button buttonObject, int buttonType, TextView debugTextView) {
-        this.context = context;
+    public MouseButton(Context parent, Button buttonObject, int buttonType, TextView debugTextView) {
+        this.parent = parent;
         this.buttonObject = buttonObject;
         this.buttonType = buttonType;
-        gestureDetector = new GestureDetector(context, new MouseButtonGestureListener());
+        isLongPress = false;
+        gestureDetector = new GestureDetector(parent, new MouseButtonGestureListener());
         buttonObject.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                gestureDetector.onTouchEvent(event);
-                return false;
+                return gestureDetector.onTouchEvent(event);
             }
         });
         this.debugTextView = debugTextView;
@@ -44,6 +44,8 @@ public class MouseButton {
 
         @Override
         public void onLongPress(MotionEvent e) {
+            isLongPress = true;
+            buttonObject.setPressed(true);
             debugTextView.setText("Long press");
             super.onLongPress(e);
         }
@@ -62,7 +64,13 @@ public class MouseButton {
 
         @Override
         public boolean onDown(MotionEvent e) {
-            debugTextView.setText("Down");
+            if (isLongPress) {
+                isLongPress = false;
+                buttonObject.setPressed(false);
+            }
+            else {
+                debugTextView.setText("Down");
+            }
             return super.onDown(e);
         }
     }
