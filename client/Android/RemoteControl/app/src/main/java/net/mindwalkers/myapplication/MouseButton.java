@@ -7,6 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MouseButton {
     public static final int LEFT = 1;
     public static final int RIGHT = 2;
@@ -19,7 +25,9 @@ public class MouseButton {
     private TextView debugTextView;
     private boolean isLongPress;
 
-    public MouseButton(Context parent, Button buttonObject, int buttonType, TextView debugTextView) {
+    RestClient client;
+
+    public MouseButton(Context parent, Button buttonObject, int buttonType, TextView debugTextView, RestClient client) {
         this.parent = parent;
         this.buttonObject = buttonObject;
         this.buttonType = buttonType;
@@ -33,6 +41,7 @@ public class MouseButton {
         });
 
         this.debugTextView = debugTextView;
+        this.client = client;
     }
     private class MouseButtonGestureListener extends GestureDetector.SimpleOnGestureListener
     {
@@ -69,7 +78,20 @@ public class MouseButton {
                 buttonObject.setPressed(false);
             }
             else {
-                debugTextView.setText("Down");
+                client.getApi().mousePosition().enqueue(new Callback<MousePosition>() {
+                    @Override
+                    public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+                        if (response.body() != null) {
+                            debugTextView.setText("Down X: " + response.body().getX() + " Y: " + response.body().getY());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MousePosition> call, Throwable t) {
+
+                    }
+                });
+
             }
             return super.onDown(e);
         }

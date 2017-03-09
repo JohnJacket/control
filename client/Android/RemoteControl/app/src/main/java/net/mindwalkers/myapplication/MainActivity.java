@@ -11,15 +11,19 @@ public class MainActivity extends AppCompatActivity {
     MouseButton leftMouseButton, rightMouseButton;
     TouchPad touchPad;
     TextView debugTextView;
+    public RestClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        RestServer server = new RestServer("http://127.0.0.1:50000/", "Server");
+        client = new RestClient(server);
+
         debugTextView = (TextView)findViewById(R.id.debugTextView);
-        touchPad = new TouchPad(this, (ImageView)findViewById(R.id.touchPad), debugTextView);
-        leftMouseButton = new MouseButton(this, (Button)findViewById(R.id.leftButton), MouseButton.LEFT, debugTextView);
-        rightMouseButton = new MouseButton(this, (Button)findViewById(R.id.rightButton), MouseButton.RIGHT, debugTextView);
+        touchPad = new TouchPad(this, (ImageView)findViewById(R.id.touchPad), debugTextView, client);
+        leftMouseButton = new MouseButton(this, (Button)findViewById(R.id.leftButton), MouseButton.LEFT, debugTextView, client);
+        rightMouseButton = new MouseButton(this, (Button)findViewById(R.id.rightButton), MouseButton.RIGHT, debugTextView, client);
     }
 }

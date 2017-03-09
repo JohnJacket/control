@@ -12,15 +12,18 @@ public class TouchPad {
     private GestureDetector gestureDetector;
     private TextView debugTextView;
     private ImageView touchPadObject;
+    private RestClient client;
     private boolean isWheelEmulate;
 
-    public TouchPad(Context parent, ImageView touchPadObject, TextView debugTextView1) {
+    public TouchPad(Context parent, ImageView touchPadObject, TextView debugTextView1, RestClient client) {
         this.parent = parent;
         this.touchPadObject = touchPadObject;
         this.debugTextView = debugTextView1;
         gestureDetector = new GestureDetector(parent, new TouchPadGestureListener());
         gestureDetector.setIsLongpressEnabled(false);
         isWheelEmulate = false;
+
+        this.client = client;
 
         touchPadObject.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -55,8 +58,6 @@ public class TouchPad {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-
-
             if (distanceY > 0.0) {
                 if (isWheelEmulate)
                     debugTextView.setText("wheel up " + distanceX + " " + distanceY);
