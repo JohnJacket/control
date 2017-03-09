@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route('/mouse/position', methods=['GET'])
 def get_mouse_posiniton():
     (x, y) = win32control.mouse_position()
-    return jsonify({'mouse_position': {'x':x, 'y':y}})
+    return jsonify({'x':x, 'y':y})
 
 '''
 {
