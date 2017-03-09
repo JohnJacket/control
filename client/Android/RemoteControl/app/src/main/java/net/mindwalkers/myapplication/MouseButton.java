@@ -79,8 +79,7 @@ public class MouseButton {
                     @Override
                     public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
                         if (response.body() != null) {
-                            debugTextView.setText(response.toString());
-                            //debugTextView.setText("Down X: " + response.body().getX() + " Y: " + response.body().getY());
+                            debugTextView.setText("Down X: " + response.body().getX() + " Y: " + response.body().getY());
                         }
                     }
 
