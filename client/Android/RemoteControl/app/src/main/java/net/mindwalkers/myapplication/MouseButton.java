@@ -25,8 +25,6 @@ public class MouseButton {
     private TextView debugTextView;
     private boolean isLongPress;
 
-    RestClient client;
-
     public MouseButton(Context parent, Button buttonObject, int buttonType, TextView debugTextView, RestClient client) {
         this.parent = parent;
         this.buttonObject = buttonObject;
@@ -41,7 +39,6 @@ public class MouseButton {
         });
 
         this.debugTextView = debugTextView;
-        this.client = client;
     }
     private class MouseButtonGestureListener extends GestureDetector.SimpleOnGestureListener
     {
@@ -78,20 +75,20 @@ public class MouseButton {
                 buttonObject.setPressed(false);
             }
             else {
-                client.getApi().mousePosition().enqueue(new Callback<MousePosition>() {
+                RestClient.getApi().mousePosition().enqueue(new Callback<MousePosition>() {
                     @Override
                     public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
                         if (response.body() != null) {
-                            debugTextView.setText("Down X: " + response.body().getX() + " Y: " + response.body().getY());
+                            debugTextView.setText(response.toString());
+                            //debugTextView.setText("Down X: " + response.body().getX() + " Y: " + response.body().getY());
                         }
                     }
 
                     @Override
                     public void onFailure(Call<MousePosition> call, Throwable t) {
-
+                        debugTextView.setText(t.toString());
                     }
                 });
-
             }
             return super.onDown(e);
         }

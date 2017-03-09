@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RestServer server = new RestServer("http://127.0.0.1:50000/", "Server");
+        RestServer server = new RestServer("http://192.168.112.152:5000/", "Server");
         client = new RestClient(server);
 
         debugTextView = (TextView)findViewById(R.id.debugTextView);
