@@ -54,7 +54,7 @@ public class MouseButton {
             buttonObject.setPressed(true);
 
             MouseDown mouseDownBody = new MouseDown();
-            mouseDownBody.setButton(8);
+            mouseDownBody.setButton(buttonType);
 
             RestClient.getApi().mouseDown(mouseDownBody).enqueue(new Callback<MousePosition>() {
                 @Override
@@ -74,7 +74,7 @@ public class MouseButton {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             MouseDown mouseDownBody = new MouseDown();
-            mouseDownBody.setButton(8);
+            mouseDownBody.setButton(buttonType);
 
             RestClient.getApi().mouseUp(mouseDownBody).enqueue(new Callback<MousePosition>() {
                 @Override
@@ -91,14 +91,6 @@ public class MouseButton {
             return super.onSingleTapUp(e);
         }
 
-        /*
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            debugTextView.setText("Fling");
-            return super.onFling(e1, e2, velocityX, velocityY);
-        }
-        */
-
         @Override
         public boolean onDown(MotionEvent e) {
             if (isLongPress) {
@@ -107,7 +99,7 @@ public class MouseButton {
             }
             else {
                 MouseDown mouseDownBody = new MouseDown();
-                mouseDownBody.setButton(8);
+                mouseDownBody.setButton(buttonType);
 
                 RestClient.getApi().mouseDown(mouseDownBody).enqueue(new Callback<MousePosition>() {
                     @Override

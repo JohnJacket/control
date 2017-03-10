@@ -62,14 +62,14 @@ public class TouchPad {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            /*if (isWheelEmulate) {
+            if (isWheelEmulate) {
                 
             }
             else {
                 MouseMove mouseMoveBody = new MouseMove();
                 mouseMoveBody.setSpeed(0);
-                mouseMoveBody.setX(((int) distanceX));
-                mouseMoveBody.setY(((int) distanceY));
+                mouseMoveBody.setX(-((int) distanceX));
+                mouseMoveBody.setY(-((int) distanceY));
 
                 RestClient.getApi().mouseMove(mouseMoveBody).enqueue(new Callback<MousePosition>() {
                     @Override
@@ -82,7 +82,7 @@ public class TouchPad {
 
                     }
                 });
-            }*/
+            }
 
             if (distanceY > 0.0) {
                 if (isWheelEmulate)
@@ -98,12 +98,6 @@ public class TouchPad {
             }
 
             return super.onScroll(e1, e2, distanceX, distanceY);
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-
-            return super.onDown(e);
         }
     }
 }
