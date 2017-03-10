@@ -1,5 +1,6 @@
 import time
 import win32api, win32gui, win32con
+import Constant
 
 
 def mouse_move(x, y, speed = 0):
@@ -32,12 +33,8 @@ def mouse_move(x, y, speed = 0):
                 #mouse_move(x, y)
 
 
-def mouse_move_relative(x, y, speed = 0):
-    (cur_x, cur_y) = mouse_position()
-    mouse_move(cur_x + x, cur_y + y, speed)
-
-
-def mouse_click(button = win32con.MOUSEEVENTF_LEFTDOWN, repeat = 1, delay = 0.012):
+def mouse_click(button = Constant.LEFT_MOUSE_BUTTON, repeat = 1, delay = 0.012):
+    button = translate_to_win32(button)
     if repeat > 1:
         while repeat > 0:
             mouse_click(button)
@@ -48,25 +45,28 @@ def mouse_click(button = win32con.MOUSEEVENTF_LEFTDOWN, repeat = 1, delay = 0.01
         win32api.mouse_event(button*2, 0, 0, 0, 0)
 
 
-def mouse_down(button = win32con.MOUSEEVENTF_LEFTDOWN):
+def mouse_down(button = Constant.LEFT_MOUSE_BUTTON):
+    button = translate_to_win32(button)
     win32api.mouse_event(button, 0, 0, 0, 0)
 
 
 def mouse_up(button = win32con.MOUSEEVENTF_LEFTDOWN):
+    button = translate_to_win32(button)
     win32api.mouse_event(button*2, 0, 0, 0, 0)
 
 
-def mouse_drag(x1, y1, x2, y2, button = win32con.MOUSEEVENTF_LEFTDOWN, speed = 0):
-    if (x1, y1) is not mouse_position():
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x1, y1, 0, 0)
-    win32api.mouse_event(button, 0, 0, 0, 0)
-    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x2, y2, 0, 0)
-    win32api.mouse_event(button*2, 0, 0, 0, 0)
-
-
-def mouse_wheel(direction, amount):
-    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, win32con.WHEEL_DELTA*direction*amount, 0)
+def mouse_wheel(amount):
+    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, amount, 0)
 
 
 def mouse_position():
     return win32gui.GetCursorPos()
+
+
+def translate_to_win32(button):
+    if (button == Constant.LEFT_MOUSE_BUTTON):
+        return win32con.MOUSEEVENTF_LEFTDOWN
+    elif (button == Constant.RIGHT_MOUSE_BUTTON):
+        return win32con.MOUSEEVENTF_RIGHTDOWN
+    elif (button == Constant.MIDDLE_MOUSE_BUTTON):
+        return win32con.MOUSEEVENTF_MIDDLEDOWN
