@@ -42,30 +42,53 @@ public class MouseButton {
     }
     private class MouseButtonGestureListener extends GestureDetector.SimpleOnGestureListener
     {
-        @Override
+        /*@Override
         public boolean onDoubleTapEvent(MotionEvent e) {
             debugTextView.setText("double tap");
             return super.onDoubleTapEvent(e);
         }
-
+        */
         @Override
         public void onLongPress(MotionEvent e) {
             isLongPress = true;
             buttonObject.setPressed(true);
-            debugTextView.setText("Long press");
+
+            MouseDown mouseDownBody = new MouseDown();
+            mouseDownBody.setButton(buttonType);
+
+            RestClient.getApi().mouseDown(mouseDownBody).enqueue(new Callback<MousePosition>() {
+                @Override
+                public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+                    debugTextView.setText("Long press");
+                }
+
+                @Override
+                public void onFailure(Call<MousePosition> call, Throwable t) {
+
+                }
+            });
+
             super.onLongPress(e);
         }
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-            debugTextView.setText("Single Up");
-            return super.onSingleTapUp(e);
-        }
+            MouseDown mouseDownBody = new MouseDown();
+            mouseDownBody.setButton(buttonType);
 
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            debugTextView.setText("Fling");
-            return super.onFling(e1, e2, velocityX, velocityY);
+            RestClient.getApi().mouseUp(mouseDownBody).enqueue(new Callback<MousePosition>() {
+                @Override
+                public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+                    debugTextView.setText("Single Up");
+                }
+
+                @Override
+                public void onFailure(Call<MousePosition> call, Throwable t) {
+
+                }
+            });
+
+            return super.onSingleTapUp(e);
         }
 
         @Override
@@ -75,17 +98,18 @@ public class MouseButton {
                 buttonObject.setPressed(false);
             }
             else {
-                RestClient.getApi().mousePosition().enqueue(new Callback<MousePosition>() {
+                MouseDown mouseDownBody = new MouseDown();
+                mouseDownBody.setButton(buttonType);
+
+                RestClient.getApi().mouseDown(mouseDownBody).enqueue(new Callback<MousePosition>() {
                     @Override
                     public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
-                        if (response.body() != null) {
-                            debugTextView.setText("Down X: " + response.body().getX() + " Y: " + response.body().getY());
-                        }
+                        debugTextView.setText("Down");
                     }
 
                     @Override
                     public void onFailure(Call<MousePosition> call, Throwable t) {
-                        debugTextView.setText(t.toString());
+
                     }
                 });
             }

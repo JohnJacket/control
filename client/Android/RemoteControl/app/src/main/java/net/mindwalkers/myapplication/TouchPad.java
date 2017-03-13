@@ -7,6 +7,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class TouchPad {
     private Context parent;
     private GestureDetector gestureDetector;
@@ -58,6 +62,28 @@ public class TouchPad {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (isWheelEmulate) {
+                
+            }
+            else {
+                MouseMove mouseMoveBody = new MouseMove();
+                mouseMoveBody.setSpeed(0);
+                mouseMoveBody.setX(-((int) distanceX));
+                mouseMoveBody.setY(-((int) distanceY));
+
+                RestClient.getApi().mouseMove(mouseMoveBody).enqueue(new Callback<MousePosition>() {
+                    @Override
+                    public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<MousePosition> call, Throwable t) {
+
+                    }
+                });
+            }
+
             if (distanceY > 0.0) {
                 if (isWheelEmulate)
                     debugTextView.setText("wheel up " + distanceX + " " + distanceY);

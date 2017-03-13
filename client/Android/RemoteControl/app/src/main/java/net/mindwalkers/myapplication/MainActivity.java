@@ -12,13 +12,14 @@ public class MainActivity extends AppCompatActivity {
     TouchPad touchPad;
     TextView debugTextView;
     public RestClient client;
+    public static final String testServerAddress = "http://192.168.112.152:5000/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RestServer server = new RestServer("http://192.168.112.152:5000/", "Server");
+        RestServer server = new RestServer(testServerAddress, "Server");
         client = new RestClient(server);
 
         debugTextView = (TextView)findViewById(R.id.debugTextView);
