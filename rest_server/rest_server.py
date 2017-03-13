@@ -23,14 +23,6 @@ def mouse_move():
     win32control.mouse_move(request.json['x'], request.json['y'], request.json.get('speed'))
     return 'Success', 200
 
-
-@app.route('/mouse/move/relative', methods=['POST'])
-def mouse_move_relative():
-    if not request.json or not 'x' in request.json or not 'y' in request.json:
-        abort(400)
-    win32control.mouse_move_relative(request.get_json()['x'], request.get_json()['y'], request.get_json().get('speed', 0))
-    return 'Success', 200
-
 '''
 {
 	"button":8,
@@ -51,6 +43,7 @@ def mouse_click():
 }
 '''
 
+
 @app.route('/mouse/down', methods=['POST'])
 def mouse_down():
     win32control.mouse_down(request.get_json().get('button', 8))
@@ -64,28 +57,16 @@ def mouse_up():
 
 '''
 {
-	"x1":8,
-	"y1":8,
-	"x2":8,
-	"y2":8,
-	"button":8,
-	"speed":8,
+"amount":-200.0,
 }
 '''
-
-@app.route('/mouse/drag', methods=['POST'])
-def mouse_drag():
-    if not request.json or not 'x1' in request.json or not 'y1' in request.json or not 'x2' in request.json or not 'y2' in request.json:
-        abort(400)
-    win32control.mouse_drag(request.json['x1'], request.json['y1'], request.json['x2'], request.json['y2'], request.json.get('button'), request.json.get('speed'))
-    return 'Success', 200
 
 
 @app.route('/mouse/wheel', methods=['POST'])
 def mouse_wheel():
-    if not request.json or not 'direction' in request.json or not 'amount' in request.json:
+    if not request.json or not 'amount' in request.json:
         abort(400)
-    win32control.mouse_wheel(request.json['direction'], request.json['amount'])
+    win32control.mouse_wheel(request.json['amount'])
     return 'Success', 200
 
 
