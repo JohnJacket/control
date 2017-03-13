@@ -19,6 +19,11 @@ public class TouchPad {
     private RestClient client;
     private boolean isWheelEmulate;
 
+    private float moveSpeed = 1.0f;
+    private float x;
+    private float y;
+
+
     public TouchPad(Context parent, ImageView touchPadObject, TextView debugTextView1, RestClient client) {
         this.parent = parent;
         this.touchPadObject = touchPadObject;
@@ -37,6 +42,8 @@ public class TouchPad {
                         isWheelEmulate = false;
                         break;
                     case MotionEvent.ACTION_POINTER_DOWN:
+                        x = event.getX();
+                        y = event.getY();
                         isWheelEmulate = true;
                         break;
                     case MotionEvent.ACTION_UP:
@@ -46,8 +53,52 @@ public class TouchPad {
                         if (event.getPointerCount() < 3)
                             isWheelEmulate = false;
                         break;
+                    case MotionEvent.ACTION_MOVE:
+                        float moveX = event.getX();
+                        float moveY = event.getY();
+                        if (isWheelEmulate) {
+
+                        }
+                        else {
+                            MouseMove mouseMoveBody = new MouseMove();
+                            mouseMoveBody.setSpeed(0);
+                            mouseMoveBody.setX((int)(moveX - x));
+                            mouseMoveBody.setY((int)(moveY - y));
+
+                            x = moveX;
+                            y = moveY;
+
+                            RestClient.getApi().mouseMove(mouseMoveBody).enqueue(new Callback<MousePosition>() {
+                                @Override
+                                public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<MousePosition> call, Throwable t) {
+
+                                }
+                            });
+                        }
+
+                        if (y > 0.0) {
+                            if (isWheelEmulate)
+                                debugTextView.setText("wheel up " + x + " " + y);
+                            else
+                                debugTextView.setText("scroll up " + x + " " + y);
+                        }
+                        else if (y < 0.0) {
+                            if (isWheelEmulate)
+                                debugTextView.setText("wheel down " + x + " " + y);
+                            else
+                                debugTextView.setText("scroll down " + x + " " + y);
+                        }
+                        break;
+                        //return true;
+                    default:
+                        break;
                 }
-                gestureDetector.onTouchEvent(event);
+                //gestureDetector.onTouchEvent(event);
                 return true;
             }
         });
