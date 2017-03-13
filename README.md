@@ -4,13 +4,14 @@ Server and client for control PC's mouse, keyboard and do some quick operations 
 ### Current progress
 * REST server written on Python 3.6
 * Mouse control support by server
-* Android client with GET MousePosition operation
+* Android client with mouse control support.
 
 ### In development
-* Android client with mouse control support
 * Service discovery
 * Async REST server
 * Keyboard control support
+* Fullscreen keyboard
+* PC's control panel
 * Server on Linux and Mac
 
 ## Server
