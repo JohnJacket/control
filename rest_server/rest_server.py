@@ -92,10 +92,7 @@ class Application(tornado.web.Application):
 
 def main():
     app = Application()
-    sockets = tornado.netutil.bind_sockets(8888)
-    tornado.process.fork_processes(0)
-    server = tornado.httpserver.HTTPServer(app)
-    server.add_sockets(sockets)
+    app.listen(5000)
     IOLoop.current().start()
 
 '''
