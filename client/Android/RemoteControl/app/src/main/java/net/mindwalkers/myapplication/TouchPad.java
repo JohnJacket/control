@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,8 +24,21 @@ public class TouchPad {
     private boolean isWheelEmulate;
 
     private float moveSpeed = 1.0f;
-    private float x;
-    private float y;
+    private float wheelSpeed = 1.0f;
+    private float mouseX;
+    private float mouseY;
+
+    private float moveX;
+    private float moveY;
+
+    private Timer mouseMoveTimer;
+    private Timer wheelTimer;
+
+    private SendMouseMove sendMouseMoveTask;
+
+
+    private static final int mouaeMoveDelay = 200;
+    private static final int mouseMovePeriod = 100;
 
 
     public TouchPad(Context parent, ImageView touchPadObject, TextView debugTextView1, RestClient client) {
@@ -42,16 +57,19 @@ public class TouchPad {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_DOWN:
                         isWheelEmulate = false;
-                        break;
-                    case MotionEvent.ACTION_POINTER_DOWN:
-                        x = event.getX();
-                        y = event.getY();
+
+                        mouseX = event.getX();
+                        mouseY = event.getY();
+
+                        moveX = 0.0f;
+                        moveY = 0.0f;
+
                         RestClient.getApi().mousePosition().enqueue(new Callback<MousePosition>() {
                             @Override
                             public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
                                 MousePosition pos = response.body();
-                                x = pos.getX();
-                                y = pos.getY();
+                                mouseX = pos.getX();
+                                mouseY = pos.getY();
                             }
 
                             @Override
@@ -59,66 +77,55 @@ public class TouchPad {
 
                             }
                         });
-
+                        break;
+                    case MotionEvent.ACTION_POINTER_DOWN:
                         isWheelEmulate = true;
                         break;
                     case MotionEvent.ACTION_UP:
                         isWheelEmulate = false;
+                        mouseMoveTimer.cancel();
+                        sendMouseMoveTask = null;
+                        mouseMoveTimer = null;
                         break;
                     case MotionEvent.ACTION_POINTER_UP:
                         if (event.getPointerCount() < 3)
                             isWheelEmulate = false;
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        float moveX = event.getX();
-                        float moveY = event.getY();
+                        float x = event.getX();
+                        float y = event.getY();
 
-                        if (Math.abs(moveX - x) > 0 && Math.abs(moveX - x) < 1 && Math.abs(moveY - y) > 0 && Math.abs(moveY - y) < 1)
-                        {
-                            x = moveX;
-                            y = moveY;
-                            break;
-                        }
-
-                        int distanceX = (int)(moveX - x);
-                        int distanceY = (int)(moveY - y);
+                        float moveDistanceX = x - mouseX;
+                        float moveDistanceY = y - mouseY;
 
                         if (isWheelEmulate) {
 
                         }
                         else {
-                            MouseMove mouseMoveBody = new MouseMove();
-                            mouseMoveBody.setSpeed(0);
-                            mouseMoveBody.setX(distanceX);
-                            mouseMoveBody.setY(distanceY);
+                            if (mouseMoveTimer == null)
+                            {
+                                mouseMoveTimer = new Timer();
+                                sendMouseMoveTask = new SendMouseMove();
+                                mouseMoveTimer.schedule(sendMouseMoveTask, mouaeMoveDelay, mouseMovePeriod);
+                            }
 
-                            x = moveX;
-                            y = moveY;
-
-                            RestClient.getApi().mouseMove(mouseMoveBody).enqueue(new Callback<MousePosition>() {
-                                @Override
-                                public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<MousePosition> call, Throwable t) {
-
-                                }
-                            });
+                            moveX += moveDistanceX;
+                            moveY += moveDistanceY;
+                            mouseX = x;
+                            mouseY = y;
                         }
 
-                        if (distanceY < 0.0) {
+                        if (moveDistanceY < 0.0) {
                             if (isWheelEmulate)
-                                debugTextView.setText("wheel up " + x + " " + y);
+                                debugTextView.setText("wheel up " + mouseX + " " + mouseY);
                             else
-                                debugTextView.setText("scroll up " + x + " " + y);
+                                debugTextView.setText("scroll up " + mouseX + " " + mouseY);
                         }
-                        else if (distanceY > 0.0) {
+                        else if (moveDistanceY > 0.0) {
                             if (isWheelEmulate)
-                                debugTextView.setText("wheel down " + x + " " + y);
+                                debugTextView.setText("wheel down " + mouseX + " " + mouseY);
                             else
-                                debugTextView.setText("scroll down " + x + " " + y);
+                                debugTextView.setText("scroll down " + mouseX + " " + mouseY);
                         }
                         break;
                         //return true;
@@ -129,6 +136,44 @@ public class TouchPad {
                 return true;
             }
         });
+    }
+
+    private class SendMouseMove extends TimerTask {
+
+        @Override
+        public void run() {
+            float absMoveX = Math.abs(moveSpeed*moveX);
+            float absMoveY = Math.abs(moveSpeed*moveY);
+
+            if (absMoveX > 0 && absMoveX < 1 && absMoveY > 0 && absMoveY < 1)
+            {
+                return;
+            }
+            else if (absMoveX == 0 && absMoveY == 0)
+            {
+                return;
+            }
+
+            int distanceX = (int)(moveSpeed*moveX);
+            int distanceY = (int)(moveSpeed*moveY);
+
+            MouseMove mouseMoveBody = new MouseMove();
+            mouseMoveBody.setSpeed(0);
+            mouseMoveBody.setX(distanceX);
+            mouseMoveBody.setY(distanceY);
+
+            RestClient.getApi().mouseMove(mouseMoveBody).enqueue(new Callback<MousePosition>() {
+                @Override
+                public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<MousePosition> call, Throwable t) {
+
+                }
+            });
+        }
     }
 
     private class TouchPadGestureListener extends GestureDetector.SimpleOnGestureListener {
