@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,6 +46,20 @@ public class TouchPad {
                     case MotionEvent.ACTION_POINTER_DOWN:
                         x = event.getX();
                         y = event.getY();
+                        RestClient.getApi().mousePosition().enqueue(new Callback<MousePosition>() {
+                            @Override
+                            public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+                                MousePosition pos = response.body();
+                                x = pos.getX();
+                                y = pos.getY();
+                            }
+
+                            @Override
+                            public void onFailure(Call<MousePosition> call, Throwable t) {
+
+                            }
+                        });
+
                         isWheelEmulate = true;
                         break;
                     case MotionEvent.ACTION_UP:
@@ -56,14 +72,25 @@ public class TouchPad {
                     case MotionEvent.ACTION_MOVE:
                         float moveX = event.getX();
                         float moveY = event.getY();
+
+                        if (Math.abs(moveX - x) > 0 && Math.abs(moveX - x) < 1 && Math.abs(moveY - y) > 0 && Math.abs(moveY - y) < 1)
+                        {
+                            x = moveX;
+                            y = moveY;
+                            break;
+                        }
+
+                        int distanceX = (int)(moveX - x);
+                        int distanceY = (int)(moveY - y);
+
                         if (isWheelEmulate) {
 
                         }
                         else {
                             MouseMove mouseMoveBody = new MouseMove();
                             mouseMoveBody.setSpeed(0);
-                            mouseMoveBody.setX((int)(moveX - x));
-                            mouseMoveBody.setY((int)(moveY - y));
+                            mouseMoveBody.setX(distanceX);
+                            mouseMoveBody.setY(distanceY);
 
                             x = moveX;
                             y = moveY;
@@ -81,13 +108,13 @@ public class TouchPad {
                             });
                         }
 
-                        if (y > 0.0) {
+                        if (distanceY < 0.0) {
                             if (isWheelEmulate)
                                 debugTextView.setText("wheel up " + x + " " + y);
                             else
                                 debugTextView.setText("scroll up " + x + " " + y);
                         }
-                        else if (y < 0.0) {
+                        else if (distanceY > 0.0) {
                             if (isWheelEmulate)
                                 debugTextView.setText("wheel down " + x + " " + y);
                             else
