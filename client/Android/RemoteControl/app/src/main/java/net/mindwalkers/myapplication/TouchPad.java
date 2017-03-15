@@ -24,7 +24,7 @@ public class TouchPad {
     private boolean isWheelEmulate;
 
     private float moveSpeed = 1.0f;
-    private float wheelSpeed = 1.0f;
+    private float wheelSpeed = 2.0f;
 
     private float moveX;
     private float moveY;
@@ -121,8 +121,10 @@ public class TouchPad {
                     return;
                 }
 
+                int distanceY = (int)(wheelSpeed*moveY);
+
                 MouseWheel mouseWheelBody = new MouseWheel();
-                mouseWheelBody.setAmount((double)-moveY);
+                mouseWheelBody.setAmount(-distanceY);
 
                 RestClient.getApi().mouseWheel(mouseWheelBody).enqueue(new Callback<MousePosition>() {
                     @Override
