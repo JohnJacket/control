@@ -21,4 +21,7 @@ public interface RemoteControlApi {
 
     @POST("mouse/move")
     Call<MousePosition> mouseMove(@Body MouseMove mouseMoveBody);
+
+    @POST("mouse/wheel")
+    Call<MousePosition> mouseWheel(@Body MouseWheel mouseWheelBody);
 }
