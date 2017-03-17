@@ -1,4 +1,4 @@
-package net.mindwalkers.myapplication;
+package net.mindwalkers.control;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

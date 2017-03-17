@@ -1,4 +1,4 @@
-package net.mindwalkers.myapplication;
+package net.mindwalkers.control;
 
 import android.content.Context;
 import android.view.GestureDetector;
@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 

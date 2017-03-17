@@ -1,4 +1,4 @@
-package net.mindwalkers.myapplication;
+package net.mindwalkers.control;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

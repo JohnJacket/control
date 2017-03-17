@@ -1,4 +1,4 @@
-package net.mindwalkers.myapplication;
+package net.mindwalkers.control;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

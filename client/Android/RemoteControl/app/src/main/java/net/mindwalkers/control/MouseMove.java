@@ -1,9 +1,9 @@
-package net.mindwalkers.myapplication;
+package net.mindwalkers.control;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MousePosition {
+public class MouseMove {
 
     @SerializedName("x")
     @Expose
@@ -11,6 +11,9 @@ public class MousePosition {
     @SerializedName("y")
     @Expose
     private Integer y;
+    @SerializedName("speed")
+    @Expose
+    private Integer speed;
 
     public Integer getX() {
         return x;
@@ -26,6 +29,14 @@ public class MousePosition {
 
     public void setY(Integer y) {
         this.y = y;
+    }
+
+    public Integer getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(Integer speed) {
+        this.speed = speed;
     }
 
 }
