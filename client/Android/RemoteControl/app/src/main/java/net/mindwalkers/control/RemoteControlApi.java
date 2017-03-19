@@ -1,5 +1,11 @@
 package net.mindwalkers.control;
 
+import net.mindwalkers.control.mouse_control.MouseClick;
+import net.mindwalkers.control.mouse_control.MouseDown;
+import net.mindwalkers.control.mouse_control.MouseMove;
+import net.mindwalkers.control.mouse_control.MousePosition;
+import net.mindwalkers.control.mouse_control.MouseWheel;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;

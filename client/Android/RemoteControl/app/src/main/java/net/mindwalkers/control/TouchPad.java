@@ -7,6 +7,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.mindwalkers.control.mouse_control.MouseMove;
+import net.mindwalkers.control.mouse_control.MousePosition;
+import net.mindwalkers.control.mouse_control.MouseWheel;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
