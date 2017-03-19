@@ -1,39 +1,37 @@
-import time
-import win32api, win32gui, win32con
 import Constant
+import time
+import win32api
+import win32gui
+import win32con
 
 
-def mouse_move(x, y, speed = 0):
+def mouse_move(x, y, speed=0):
     if speed is 0:
-        #win32api.SetCursorPos(x, y)
         win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y, 0, 0)
     else:
         (actualX, actualY) = mouse_position()
-        aimX = x
-        aimY = y
+        aim_x = x
+        aim_y = y
 
         while True:
-            if actualX > aimX:
+            if actualX > aim_x:
                 actualX -= speed
-            elif actualX < aimX:
+            elif actualX < aim_x:
                 actualX += speed
 
-            if actualY > aimY:
+            if actualY > aim_y:
                 actualY -= speed
-            elif actualY < aimY:
+            elif actualY < aim_y:
                 actualY += speed
 
             mouse_move(actualX, actualY)
 
-            if actualX > (aimX - speed) and actualX < (aimX + speed):
-                if actualY > (aimY - speed) and actualY < (aimY + speed):
+            if (aim_x - speed) < actualX < (aim_x + speed):
+                if (aim_y - speed) < actualY < (aim_y + speed):
                     break
 
-            #if (x, y) is not mouse_position():
-                #mouse_move(x, y)
 
-
-def mouse_click(button = Constant.LEFT_MOUSE_BUTTON, repeat = 1, delay = 0.012):
+def mouse_click(button=Constant.LEFT_MOUSE_BUTTON, repeat=1, delay=0.012):
     button = translate_to_win32(button)
     if repeat > 1:
         while repeat > 0:
@@ -45,12 +43,12 @@ def mouse_click(button = Constant.LEFT_MOUSE_BUTTON, repeat = 1, delay = 0.012):
         win32api.mouse_event(button*2, 0, 0, 0, 0)
 
 
-def mouse_down(button = Constant.LEFT_MOUSE_BUTTON):
+def mouse_down(button=Constant.LEFT_MOUSE_BUTTON):
     button = translate_to_win32(button)
     win32api.mouse_event(button, 0, 0, 0, 0)
 
 
-def mouse_up(button = win32con.MOUSEEVENTF_LEFTDOWN):
+def mouse_up(button=win32con.MOUSEEVENTF_LEFTDOWN):
     button = translate_to_win32(button)
     win32api.mouse_event(button*2, 0, 0, 0, 0)
 
@@ -64,9 +62,9 @@ def mouse_position():
 
 
 def translate_to_win32(button):
-    if (button == Constant.LEFT_MOUSE_BUTTON):
+    if button == Constant.LEFT_MOUSE_BUTTON:
         return win32con.MOUSEEVENTF_LEFTDOWN
-    elif (button == Constant.RIGHT_MOUSE_BUTTON):
+    elif button == Constant.RIGHT_MOUSE_BUTTON:
         return win32con.MOUSEEVENTF_RIGHTDOWN
-    elif (button == Constant.MIDDLE_MOUSE_BUTTON):
+    elif button == Constant.MIDDLE_MOUSE_BUTTON:
         return win32con.MOUSEEVENTF_MIDDLEDOWN
