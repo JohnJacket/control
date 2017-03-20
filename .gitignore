@@ -1,3 +1,5 @@
 flaskwin32
-__pycache__
+tornado
+aiohttp
 .idea
+__pycache__
