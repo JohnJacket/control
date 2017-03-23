@@ -2,4 +2,7 @@
     <string name="app_name">Remote Control</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="slower">Slower</string>
+    <string name="faster">Faster</string>
+    <string name="title_touchpad_sensity_preference">Touchpad sensity</string>
 </resources>

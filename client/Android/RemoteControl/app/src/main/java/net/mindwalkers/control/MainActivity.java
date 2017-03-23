@@ -23,12 +23,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        createToolbar();
+        runClient();
+        createView();
+    }
+
+    private void createToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
 
+    private void runClient() {
         RestServer server = new RestServer("http://192.168.112.152:5000/", "Server");
         client = new RestClient(server);
+    }
 
+    private void createView() {
         debugTextView = (TextView)findViewById(R.id.debugTextView);
         touchPad = new TouchPad(this, (ImageView)findViewById(R.id.touchPad), debugTextView, client);
         leftMouseButton = new MouseButton(this, (Button)findViewById(R.id.leftButton), MouseButton.LEFT, debugTextView, client);
