@@ -1,4 +1,4 @@
-package net.mindwalkers.myapplication;
+package net.mindwalkers.control;
 
 
 public class RestServer {

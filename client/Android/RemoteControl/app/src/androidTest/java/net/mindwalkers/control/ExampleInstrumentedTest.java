@@ -1,4 +1,4 @@
-package net.mindwalkers.myapplication;
+package net.mindwalkers.control;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

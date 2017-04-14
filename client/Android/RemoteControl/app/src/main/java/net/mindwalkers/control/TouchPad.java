@@ -1,19 +1,25 @@
-package net.mindwalkers.myapplication;
+package net.mindwalkers.control;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
+import net.mindwalkers.control.mouse_control.MouseMove;
+import net.mindwalkers.control.mouse_control.MousePosition;
+import net.mindwalkers.control.mouse_control.MouseWheel;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class TouchPad {
     private Context parent;
@@ -38,6 +44,7 @@ public class TouchPad {
     private static final int mouseMoveDelay = 150;
     private static final int mouseMovePeriod = 50;
 
+    public static final String PREFS_NAME = "Touchpad_sensity";
 
     public TouchPad(Context parent, ImageView touchPadObject, TextView debugTextView1, RestClient client) {
         this.parent = parent;
@@ -48,6 +55,9 @@ public class TouchPad {
         isWheelEmulate = false;
 
         this.client = client;
+
+        SharedPreferences settings = parent.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        moveSpeed = settings.getFloat("touchpadSensity", 1.0f);
 
         touchPadObject.setOnTouchListener(new View.OnTouchListener() {
             @Override
