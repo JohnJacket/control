@@ -60,11 +60,26 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent settingsPage = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(settingsPage);
-            return true;
+        switch (id) {
+            case R.id.action_settings: {
+                Intent settingsPage = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(settingsPage);
+                break;
+            }
+            case R.id.action_keyboard: {
+                debugTextView.setText("Show keyboard");
+                break;
+            }
+            case R.id.action_mouse: {
+                debugTextView.setText("Show mouse");
+                break;
+            }
+            case R.id.action_power_panel: {
+                debugTextView.setText("Show power panel");
+                break;
+            }
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
