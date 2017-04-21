@@ -90,6 +90,10 @@ public class TouchPad {
         });
     }
 
+    public ImageView getTouchPadObject() {
+        return touchPadObject;
+    }
+
     private class SendTouchPadMove extends TimerTask {
 
         @Override
