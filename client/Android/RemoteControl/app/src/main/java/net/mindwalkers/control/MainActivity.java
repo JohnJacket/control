@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public  void toggleKeyboard() {
-        //isKeyboardHidden = !isKeyboardHidden;
         toggleKeyboard(isKeyboardHidden);
     }
 

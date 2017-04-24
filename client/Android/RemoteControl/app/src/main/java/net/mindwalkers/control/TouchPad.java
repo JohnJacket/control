@@ -29,7 +29,6 @@ public class TouchPad {
     private ImageView touchPadObject;
     private RestClient client;
     private boolean isWheelEmulate;
-    private boolean isTimerActive;
 
     private float moveSpeed = 1.0f;
     private float wheelSpeed = 2.0f;
@@ -38,17 +37,12 @@ public class TouchPad {
     private float moveY;
 
     private Timer moveTimer;
-    private Timer initialTimer;
 
     private SendTouchPadMoveTask sendMoveTask;
-    private InitialSendTouchPadMoveTask initinalMoveTask;
     private boolean ignoreFirstBuggyScrollEvent = true;
 
     private static final int mouseMoveDelay = 0;
     private static final int mouseMovePeriod = 30;
-
-    private static final int initMouseMoveDelay = 0;
-    private static final int initMouseMovePeriod = 3;
 
     public static final String PREFS_NAME = "Touchpad_sensity";
     public static final String TAG = "TOUCH_PAD";
@@ -60,7 +54,6 @@ public class TouchPad {
         gestureDetector = new GestureDetector(parent, new TouchPadGestureListener());
         gestureDetector.setIsLongpressEnabled(false);
         isWheelEmulate = false;
-        isTimerActive = false;
 
         this.client = client;
 
@@ -84,15 +77,9 @@ public class TouchPad {
 
                         if (moveTimer != null) {
                             moveTimer.cancel();
-                            isTimerActive = false;
-                        }
-                        if (initialTimer != null) {
-                            initialTimer.cancel();
                         }
                         sendMoveTask = null;
-                        initinalMoveTask = null;
                         moveTimer = null;
-                        initialTimer = null;
                         ignoreFirstBuggyScrollEvent = true;
                         break;
                     case MotionEvent.ACTION_POINTER_UP:
@@ -167,42 +154,24 @@ public class TouchPad {
         });
     }
 
-    public void SendTouchPadMove() {
-        if (!isWheelEmulate) {
-            SendMove();
-        }
-        else {
-            SendWheel();
-        }
-
-        moveX = 0.0f;
-        moveY = 0.0f;
-    }
-
     private class SendTouchPadMoveTask extends TimerTask {
 
         @Override
         public void run() {
-            if (!isTimerActive)
-                isTimerActive = true;
-            SendTouchPadMove();
-        }
-    }
-
-    private class InitialSendTouchPadMoveTask extends TimerTask {
-        @Override
-        public void run() {
-            if (isTimerActive) {
-                initialTimer.cancel();
+            if (!isWheelEmulate) {
+                SendMove();
             }
             else {
-
-                SendTouchPadMove();
+                SendWheel();
             }
+
+            moveX = 0.0f;
+            moveY = 0.0f;
         }
     }
 
-        private class TouchPadGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+    private class TouchPadGestureListener extends GestureDetector.SimpleOnGestureListener {
          /*@Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             debugTextView.setText("fling touch " + velocityX + " " + velocityY);
