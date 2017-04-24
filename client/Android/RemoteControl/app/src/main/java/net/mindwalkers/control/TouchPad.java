@@ -2,6 +2,7 @@ package net.mindwalkers.control;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +29,7 @@ public class TouchPad {
     private ImageView touchPadObject;
     private RestClient client;
     private boolean isWheelEmulate;
+    private boolean isTimerActive;
 
     private float moveSpeed = 1.0f;
     private float wheelSpeed = 2.0f;
@@ -36,15 +38,20 @@ public class TouchPad {
     private float moveY;
 
     private Timer moveTimer;
-    private Timer wheelTimer;
+    private Timer initialTimer;
 
-    private SendTouchPadMove sendMoveTask;
+    private SendTouchPadMoveTask sendMoveTask;
+    private InitialSendTouchPadMoveTask initinalMoveTask;
+    private boolean ignoreFirstBuggyScrollEvent = true;
 
+    private static final int mouseMoveDelay = 0;
+    private static final int mouseMovePeriod = 30;
 
-    private static final int mouseMoveDelay = 150;
-    private static final int mouseMovePeriod = 50;
+    private static final int initMouseMoveDelay = 0;
+    private static final int initMouseMovePeriod = 3;
 
     public static final String PREFS_NAME = "Touchpad_sensity";
+    public static final String TAG = "TOUCH_PAD";
 
     public TouchPad(Context parent, ImageView touchPadObject, TextView debugTextView1, RestClient client) {
         this.parent = parent;
@@ -53,6 +60,7 @@ public class TouchPad {
         gestureDetector = new GestureDetector(parent, new TouchPadGestureListener());
         gestureDetector.setIsLongpressEnabled(false);
         isWheelEmulate = false;
+        isTimerActive = false;
 
         this.client = client;
 
@@ -64,6 +72,8 @@ public class TouchPad {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_DOWN:
+                        moveX = 0.0f;
+                        moveY = 0.0f;
                         isWheelEmulate = false;
                         break;
                     case MotionEvent.ACTION_POINTER_DOWN:
@@ -72,10 +82,18 @@ public class TouchPad {
                     case MotionEvent.ACTION_UP:
                         isWheelEmulate = false;
 
-                        if (moveTimer != null)
+                        if (moveTimer != null) {
                             moveTimer.cancel();
+                            isTimerActive = false;
+                        }
+                        if (initialTimer != null) {
+                            initialTimer.cancel();
+                        }
                         sendMoveTask = null;
+                        initinalMoveTask = null;
                         moveTimer = null;
+                        initialTimer = null;
+                        ignoreFirstBuggyScrollEvent = true;
                         break;
                     case MotionEvent.ACTION_POINTER_UP:
                         if (event.getPointerCount() < 3)
@@ -93,72 +111,98 @@ public class TouchPad {
     public ImageView getTouchPadObject() {
         return touchPadObject;
     }
+    public void SendMove() {
+        float absMoveX = Math.abs(moveSpeed*moveX);
+        float absMoveY = Math.abs(moveSpeed*moveY);
 
-    private class SendTouchPadMove extends TimerTask {
+        if (absMoveX >= 0 && absMoveX < 1 && absMoveY >= 0 && absMoveY < 1)
+        {
+            return;
+        }
+
+        int distanceX = (int)(moveSpeed*moveX);
+        int distanceY = (int)(moveSpeed*moveY);
+
+        MouseMove mouseMoveBody = new MouseMove();
+        mouseMoveBody.setSpeed(0);
+        mouseMoveBody.setX(distanceX);
+        mouseMoveBody.setY(distanceY);
+
+        RestClient.getApi().mouseMove(mouseMoveBody).enqueue(new Callback<MousePosition>() {
+            @Override
+            public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<MousePosition> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void SendWheel() {
+        double absMoveY = Math.abs(wheelSpeed*moveY);
+
+        if (absMoveY >= 0 && absMoveY < 1)
+        {
+            return;
+        }
+
+        int distanceY = (int)(wheelSpeed*moveY);
+
+        MouseWheel mouseWheelBody = new MouseWheel();
+        mouseWheelBody.setAmount(-distanceY);
+
+        RestClient.getApi().mouseWheel(mouseWheelBody).enqueue(new Callback<MousePosition>() {
+            @Override
+            public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<MousePosition> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void SendTouchPadMove() {
+        if (!isWheelEmulate) {
+            SendMove();
+        }
+        else {
+            SendWheel();
+        }
+
+        moveX = 0.0f;
+        moveY = 0.0f;
+    }
+
+    private class SendTouchPadMoveTask extends TimerTask {
 
         @Override
         public void run() {
-            if (!isWheelEmulate) {
-                float absMoveX = Math.abs(moveSpeed*moveX);
-                float absMoveY = Math.abs(moveSpeed*moveY);
-
-                if (absMoveX >= 0 && absMoveX < 1 && absMoveY >= 0 && absMoveY < 1)
-                {
-                    return;
-                }
-
-                int distanceX = (int)(moveSpeed*moveX);
-                int distanceY = (int)(moveSpeed*moveY);
-
-                MouseMove mouseMoveBody = new MouseMove();
-                mouseMoveBody.setSpeed(0);
-                mouseMoveBody.setX(distanceX);
-                mouseMoveBody.setY(distanceY);
-
-                RestClient.getApi().mouseMove(mouseMoveBody).enqueue(new Callback<MousePosition>() {
-                    @Override
-                    public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<MousePosition> call, Throwable t) {
-
-                    }
-                });
-            }
-            else {
-                double absMoveY = Math.abs(wheelSpeed*moveY);
-
-                if (absMoveY >= 0 && absMoveY < 1)
-                {
-                    return;
-                }
-
-                int distanceY = (int)(wheelSpeed*moveY);
-
-                MouseWheel mouseWheelBody = new MouseWheel();
-                mouseWheelBody.setAmount(-distanceY);
-
-                RestClient.getApi().mouseWheel(mouseWheelBody).enqueue(new Callback<MousePosition>() {
-                    @Override
-                    public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<MousePosition> call, Throwable t) {
-
-                    }
-                });
-            }
-
-            moveX = 0.0f;
-            moveY = 0.0f;
+            if (!isTimerActive)
+                isTimerActive = true;
+            SendTouchPadMove();
         }
     }
 
-    private class TouchPadGestureListener extends GestureDetector.SimpleOnGestureListener {
+    private class InitialSendTouchPadMoveTask extends TimerTask {
+        @Override
+        public void run() {
+            if (isTimerActive) {
+                initialTimer.cancel();
+            }
+            else {
+
+                SendTouchPadMove();
+            }
+        }
+    }
+
+        private class TouchPadGestureListener extends GestureDetector.SimpleOnGestureListener {
          /*@Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             debugTextView.setText("fling touch " + velocityX + " " + velocityY);
@@ -168,10 +212,17 @@ public class TouchPad {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
+            Log.i(TAG, "X: " + distanceX + " Y: " + distanceY);
+
+            if (ignoreFirstBuggyScrollEvent) {
+                ignoreFirstBuggyScrollEvent = false;
+                return true;
+            }
+
             if (moveTimer == null)
             {
                 moveTimer = new Timer();
-                sendMoveTask = new SendTouchPadMove();
+                sendMoveTask = new SendTouchPadMoveTask();
                 moveTimer.schedule(sendMoveTask, mouseMoveDelay, mouseMovePeriod);
             }
 

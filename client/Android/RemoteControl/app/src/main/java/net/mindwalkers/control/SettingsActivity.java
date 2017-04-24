@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.SeekBar;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private String TAG = "SettingsActivityTag";
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -45,14 +47,17 @@ public class SettingsActivity extends AppCompatActivity {
                 int progress = seekBar.getProgress();
                 SharedPreferences settings = getBaseContext().getSharedPreferences(TouchPad.PREFS_NAME, MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putFloat("touchpadSensity", (float)(progress/10));
+                float sensity = progress/10.0f + 1.0f;
+                editor.putFloat("touchpadSensity", sensity);
+
                 editor.commit();
             }
         });
 
         SharedPreferences settings = getBaseContext().getSharedPreferences(TouchPad.PREFS_NAME, MODE_PRIVATE);
         float sensity = settings.getFloat("touchpadSensity", 1.0f);
-        int intSensity = ((int)sensity) * 10;
+        int intSensity = (int)((sensity - 1.0f) * 10.0f);
+        Log.i(TAG, " Fl: " + sensity + " int: " + intSensity);
         seekBar.setProgress(intSensity);
     }
 
