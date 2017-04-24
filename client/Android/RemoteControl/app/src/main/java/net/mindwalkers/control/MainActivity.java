@@ -1,11 +1,18 @@
 package net.mindwalkers.control;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     TouchPad touchPad;
     TextView debugTextView;
     public RestClient client;
+    private boolean isKeyboardHidden = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +35,17 @@ public class MainActivity extends AppCompatActivity {
         createToolbar();
         runClient();
         createView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        toggleKeyboard(false);
+        super.onStop();
     }
 
     private void createToolbar() {
@@ -44,6 +63,14 @@ public class MainActivity extends AppCompatActivity {
         touchPad = new TouchPad(this, (ImageView)findViewById(R.id.touchPad), debugTextView, client);
         leftMouseButton = new MouseButton(this, (Button)findViewById(R.id.leftButton), MouseButton.LEFT, debugTextView, client);
         rightMouseButton = new MouseButton(this, (Button)findViewById(R.id.rightButton), MouseButton.RIGHT, debugTextView, client);
+
+        findViewById(R.id.touchPad).setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                debugTextView.setText(KeyEvent.keyCodeToString(keyCode));
+                return true;
+            }
+        });
     }
 
     @Override
@@ -67,11 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.action_keyboard: {
-                debugTextView.setText("Show keyboard");
-                break;
-            }
-            case R.id.action_mouse: {
-                debugTextView.setText("Show mouse");
+                toggleKeyboard();
                 break;
             }
             case R.id.action_power_panel: {
@@ -85,4 +108,33 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void toggleKeyboard(boolean forceToggleValue) {
+        if (forceToggleValue) {
+            debugTextView.setText("Show keyboard");
+            InputMethodManager im = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            im.showSoftInput(touchPad.getTouchPadObject(), InputMethodManager.SHOW_IMPLICIT);
+            isKeyboardHidden = false;
+        }
+        else {
+            debugTextView.setText("Hide keyboard");
+            ((InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(touchPad.getTouchPadObject().getWindowToken(), 0);
+            isKeyboardHidden = true;
+        }
+    }
+
+    public  void toggleKeyboard() {
+        //isKeyboardHidden = !isKeyboardHidden;
+        toggleKeyboard(isKeyboardHidden);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onBackPressed() {
+        isKeyboardHidden = false;
+        super.onBackPressed();
+    }
 }
