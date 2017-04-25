@@ -1,7 +1,14 @@
 from flask import Flask, jsonify, make_response, request, abort
+import platform
 import win32control
+import common_control
 
 app = Flask(__name__)
+
+
+@app.route('/system_info', methods=['GET'])
+def get_system_info():
+    return jsonify({'OS': platform.system(), 'Release': platform.release(), 'Machine': platform.machine(), 'Platform': platform.platform(), 'Uname': platform.uname()})
 
 
 @app.route('/mouse/position', methods=['GET'])
@@ -41,6 +48,29 @@ def mouse_wheel():
     if not (request.json and 'amount' in request.json):
         abort(400)
     win32control.mouse_wheel(request.json['amount'])
+    return 'Success', 200
+
+
+@app.route('/keyboard/write', methods=['POST'])
+def kbd_write():
+    if not (request.json and 'text' in request.json):
+        abort(400)
+    if not common_control.kbd_write(request.json['text']):
+        abort(400)
+    return 'Success', 200
+
+
+@app.route('/keyboard/key/<int:id>/<action>', methods=['POST'])
+def kbd_key_id_action(id, action = 'click'):
+    if not common_control.kbd_key_action(id, action):
+        abort(400)
+    return 'Success', 200
+
+
+@app.route('/keyboard/<key>/<action>', methods=['POST'])
+def kbd_key_action(key = 'enter', action = 'click'):
+    if not common_control.kbd_key_action(key, action):
+        abort(400)
     return 'Success', 200
 
 

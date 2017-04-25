@@ -2,6 +2,7 @@ import Constant
 import time
 import win32api
 import win32gui
+import win32clipboard
 import win32con
 
 
@@ -59,6 +60,18 @@ def mouse_wheel(amount):
 
 def mouse_position():
     return win32gui.GetCursorPos()
+
+
+def kbd_write(text):
+    return True
+
+
+def kbd_keyid_action(id, action):
+    return True
+
+
+def kbd_key_action(key, action):
+    return True
 
 
 def translate_to_win32(button):
