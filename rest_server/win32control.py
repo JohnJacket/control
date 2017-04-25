@@ -4,6 +4,7 @@ import win32api
 import win32gui
 import win32clipboard
 import win32con
+import win32dictonary
 
 
 def mouse_move(x, y, speed=0):
@@ -63,14 +64,40 @@ def mouse_position():
 
 
 def kbd_write(text):
-    return True
-
-
-def kbd_keyid_action(id, action):
+    win32clipboard.OpenClipboard()
+    win32clipboard.EmptyClipboard()
+    win32clipboard.SetClipboardText(text)
+    hwnd = win32gui.GetFocus()
+    win32api.SendMessage(hwnd, win32con.WM_PASTE, 0, 0)
+    win32clipboard.EmptyClipboard()
+    win32clipboard.CloseClipboard()
     return True
 
 
 def kbd_key_action(key, action):
+    if action == 'click':
+        return kbd_key_click(key)
+    elif action == 'down':
+        return kbd_key_down(key)
+    elif action == 'up':
+        return kbd_key_up(key)
+    else:
+        return False
+
+
+def kbd_key_click(key):
+    kbd_key_down(key)
+    kbd_key_up(key)
+    return True
+
+
+def kbd_key_down(key):
+    win32api.keybd_event(win32dictonary.VK_CODE[key], 0, 0, 0)
+    return True
+
+
+def kbd_key_up(key):
+    win32api.keybd_event(win32dictonary.VK_CODE[key], 0, win32con.KEYEVENTF_KEYUP, 0)
     return True
 
 

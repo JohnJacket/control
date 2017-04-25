@@ -5,7 +5,7 @@ Server and client for control PC's mouse, keyboard and do some quick operations 
 * REST server written on Python 3.6
 * Mouse control support by server
 * Android client with mouse control support
-* Keyboard control skeleton by server
+* Keyboard control support by server
 
 ### In development
 * Keyboard control support
@@ -15,13 +15,13 @@ Server and client for control PC's mouse, keyboard and do some quick operations 
 
 ## Server
 Written on python 3.6 with Flask and pywin32.
-Supports mouse control operations
+Supports mouse and keyboard control operations
 
 ### Supported platforms:
 * Windows.
 
 ### Server common operations
-	SestemInfo() : '/system_info' [GET]
+	SystemInfo() : '/system_info' [GET]
 	
 ### Server mouse operations
 	MouseMove (int x, int y, int speed = 0) : '/mouse/move' [POST]
@@ -33,8 +33,7 @@ Supports mouse control operations
 	
 ### Server keyboard operations
 	KeyboardWrite(string text) : '/keyboard/write' [POST]
-	KeyboardKeyIdAction(int id, string action = click) : '/keyboard/key/<int:id>/<action>' [POST]
-	KeyboardKeyAction(string key = enter, string action = click) : '/keyboard/<key>/<action>' [POST]
+	KeyboardKeyAction(string key = enter, string action = click) : '/keyboard/<key>/<action>' [GET]
 	
 ## Client
 Android client on Java.

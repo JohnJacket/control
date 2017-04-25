@@ -60,14 +60,7 @@ def kbd_write():
     return 'Success', 200
 
 
-@app.route('/keyboard/key/<int:id>/<action>', methods=['POST'])
-def kbd_key_id_action(id, action = 'click'):
-    if not common_control.kbd_key_action(id, action):
-        abort(400)
-    return 'Success', 200
-
-
-@app.route('/keyboard/<key>/<action>', methods=['POST'])
+@app.route('/keyboard/<key>/<action>', methods=['GET'])
 def kbd_key_action(key = 'enter', action = 'click'):
     if not common_control.kbd_key_action(key, action):
         abort(400)
