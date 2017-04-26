@@ -6,7 +6,7 @@ import common_control
 app = Flask(__name__)
 
 
-@app.route('/system_info', methods=['GET'])
+@app.route('/system-info', methods=['GET'])
 def get_system_info():
     return jsonify({'OS': platform.system(), 'Release': platform.release(), 'Machine': platform.machine(), 'Platform': platform.platform(), 'Uname': platform.uname()})
 
@@ -61,7 +61,7 @@ def kbd_write():
 
 
 @app.route('/keyboard/<key>/<action>', methods=['GET'])
-def kbd_key_action(key = 'enter', action = 'click'):
+def kbd_key_action(key, action = 'click'):
     if not common_control.kbd_key_action(key, action):
         abort(400)
     return 'Success', 200

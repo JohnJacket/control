@@ -21,7 +21,7 @@ Supports mouse and keyboard control operations
 * Windows.
 
 ### Server common operations
-	SystemInfo() : '/system_info' [GET]
+	SystemInfo() : '/system-info' [GET]
 	
 ### Server mouse operations
 	MouseMove (int x, int y, int speed = 0) : '/mouse/move' [POST]
@@ -33,7 +33,7 @@ Supports mouse and keyboard control operations
 	
 ### Server keyboard operations
 	KeyboardWrite(string text) : '/keyboard/write' [POST]
-	KeyboardKeyAction(string key = enter, string action = click) : '/keyboard/<key>/<action>' [GET]
+	KeyboardKeyAction(string key, string action = click) : '/keyboard/<key>/<action>' [GET]
 	
 ## Client
 Android client on Java.
