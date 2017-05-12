@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ public class TouchPad {
     private TextView debugTextView;
     private ImageView touchPadObject;
     private RestClient client;
+    private Keyboard keyboard;
     private boolean isWheelEmulate;
 
     private float moveSpeed = 1.0f;
@@ -47,8 +49,9 @@ public class TouchPad {
     public static final String PREFS_NAME = "Touchpad_sensity";
     public static final String TAG = "TOUCH_PAD";
 
-    public TouchPad(Context parent, ImageView touchPadObject, TextView debugTextView1, RestClient client) {
+    public TouchPad(Context parent, ImageView touchPadObject, TextView debugTextView1, RestClient client, Keyboard keybd) {
         this.parent = parent;
+        this.keyboard = keybd;
         this.touchPadObject = touchPadObject;
         this.debugTextView = debugTextView1;
         gestureDetector = new GestureDetector(parent, new TouchPadGestureListener());
@@ -93,17 +96,34 @@ public class TouchPad {
                 return true;
             }
         });
+
+
+        touchPadObject.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (!keyboard.isKeyboardHidden) {
+                        keyboard.isKeyboardHidden = false;
+                        debugTextView.setText("Hide keyboard");
+                    }
+                    else
+                        return false;
+                }
+                debugTextView.setText(KeyEvent.keyCodeToString(keyCode));
+                return true;
+            }
+        });
     }
 
     public ImageView getTouchPadObject() {
         return touchPadObject;
     }
+
     public void SendMove() {
         float absMoveX = Math.abs(moveSpeed*moveX);
         float absMoveY = Math.abs(moveSpeed*moveY);
 
-        if (absMoveX >= 0 && absMoveX < 1 && absMoveY >= 0 && absMoveY < 1)
-        {
+        if (absMoveX >= 0 && absMoveX < 1 && absMoveY >= 0 && absMoveY < 1) {
             return;
         }
 
@@ -131,8 +151,7 @@ public class TouchPad {
     public void SendWheel() {
         double absMoveY = Math.abs(wheelSpeed*moveY);
 
-        if (absMoveY >= 0 && absMoveY < 1)
-        {
+        if (absMoveY >= 0 && absMoveY < 1) {
             return;
         }
 
@@ -188,8 +207,7 @@ public class TouchPad {
                 return true;
             }
 
-            if (moveTimer == null)
-            {
+            if (moveTimer == null) {
                 moveTimer = new Timer();
                 sendMoveTask = new SendTouchPadMoveTask();
                 moveTimer.schedule(sendMoveTask, mouseMoveDelay, mouseMovePeriod);
