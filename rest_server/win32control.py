@@ -64,12 +64,18 @@ def mouse_position():
 
 
 def kbd_write(text):
+    if (text == ''):
+        return False
+    print(text)
     win32clipboard.OpenClipboard()
     win32clipboard.EmptyClipboard()
-    win32clipboard.SetClipboardText(text)
-    hwnd = win32gui.GetFocus()
-    win32api.SendMessage(hwnd, win32con.WM_PASTE, 0, 0)
-    win32clipboard.EmptyClipboard()
+    win32clipboard.SetClipboardText(text, win32clipboard.CF_UNICODETEXT)
+
+    win32api.keybd_event(win32con.VK_CONTROL, 0, 0, 0);
+    win32api.keybd_event(win32dictonary.VK_CODE['v'], 0, 0, 0)
+    win32api.keybd_event(win32dictonary.VK_CODE['v'], 0, win32con.KEYEVENTF_KEYUP, 0)
+    win32api.keybd_event(win32con.VK_CONTROL, 0, win32con.KEYEVENTF_KEYUP, 0);
+    #win32clipboard.EmptyClipboard()
     win32clipboard.CloseClipboard()
     return True
 
