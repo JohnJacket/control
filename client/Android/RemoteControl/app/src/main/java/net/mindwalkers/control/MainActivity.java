@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void createView() {
         debugTextView = (TextView)findViewById(R.id.debugTextView);
-        keyboard = new Keyboard(this, (TextView)findViewById(R.id.debugTextView), findViewById(R.id.touchPad));
+        keyboard = new Keyboard(this, (TextView)findViewById(R.id.debugTextView), findViewById(R.id.keyboardEditText), (EditText) findViewById(R.id.keyboardEditText));
         touchPad = new TouchPad(this, (ImageView)findViewById(R.id.touchPad), debugTextView, client, keyboard);
         leftMouseButton = new MouseButton(this, (Button)findViewById(R.id.leftButton), MouseButton.LEFT, debugTextView, client);
         rightMouseButton = new MouseButton(this, (Button)findViewById(R.id.rightButton), MouseButton.RIGHT, debugTextView, client);

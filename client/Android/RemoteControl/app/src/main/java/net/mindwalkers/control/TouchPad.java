@@ -102,12 +102,7 @@ public class TouchPad {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (!keyboard.isKeyboardHidden) {
-                        keyboard.isKeyboardHidden = false;
-                        debugTextView.setText("Hide keyboard");
-                    }
-                    else
-                        return false;
+                    return false;
                 }
                 debugTextView.setText(KeyEvent.keyCodeToString(keyCode));
                 return true;

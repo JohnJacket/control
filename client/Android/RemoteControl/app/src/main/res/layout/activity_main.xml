@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
-        app:expanded="false">
+        app:expanded="false"
+        android:id="@+id/appBarLayout">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -22,6 +23,18 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
+
+    <EditText
+        android:id="@+id/keyboardEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:cursorVisible="false"
+        android:ems="10"
+        android:inputType="text"
+        android:singleLine="false"
+        android:textColorLink="@color/colorPrimaryDark"
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/touchPad"
@@ -76,5 +89,15 @@
             android:minWidth="48dip" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/keyboardTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:contextClickable="false"
+        android:cursorVisible="false"
+        android:editable="false" />
 
 </RelativeLayout>
