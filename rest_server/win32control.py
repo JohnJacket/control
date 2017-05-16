@@ -2,7 +2,9 @@ import Constant
 import time
 import win32api
 import win32gui
+import win32clipboard
 import win32con
+import win32dictonary
 
 
 def mouse_move(x, y, speed=0):
@@ -59,6 +61,50 @@ def mouse_wheel(amount):
 
 def mouse_position():
     return win32gui.GetCursorPos()
+
+
+def kbd_write(text):
+    if (text == ''):
+        return False
+    print(text)
+    win32clipboard.OpenClipboard()
+    win32clipboard.EmptyClipboard()
+    win32clipboard.SetClipboardText(text, win32clipboard.CF_UNICODETEXT)
+
+    win32api.keybd_event(win32con.VK_CONTROL, 0, 0, 0);
+    win32api.keybd_event(win32dictonary.VK_CODE['v'], 0, 0, 0)
+    win32api.keybd_event(win32dictonary.VK_CODE['v'], 0, win32con.KEYEVENTF_KEYUP, 0)
+    win32api.keybd_event(win32con.VK_CONTROL, 0, win32con.KEYEVENTF_KEYUP, 0);
+    #win32clipboard.EmptyClipboard()
+    win32clipboard.CloseClipboard()
+    return True
+
+
+def kbd_key_action(key, action):
+    if action == 'click':
+        return kbd_key_click(key)
+    elif action == 'down':
+        return kbd_key_down(key)
+    elif action == 'up':
+        return kbd_key_up(key)
+    else:
+        return False
+
+
+def kbd_key_click(key):
+    kbd_key_down(key)
+    kbd_key_up(key)
+    return True
+
+
+def kbd_key_down(key):
+    win32api.keybd_event(win32dictonary.VK_CODE[key], 0, 0, 0)
+    return True
+
+
+def kbd_key_up(key):
+    win32api.keybd_event(win32dictonary.VK_CODE[key], 0, win32con.KEYEVENTF_KEYUP, 0)
+    return True
 
 
 def translate_to_win32(button):
