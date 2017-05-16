@@ -35,8 +35,7 @@
         android:cursorVisible="false"
         android:ems="10"
         android:imeOptions="flagNoExtractUi"
-        android:inputType="text"
-        android:singleLine="false"
+        android:inputType="textMultiLine|textImeMultiLine"
         android:textColorLink="@color/colorPrimaryDark"
         android:visibility="visible" />
 

@@ -1,6 +1,7 @@
 package net.mindwalkers.control;
 
 import android.content.Context;
+import android.hardware.camera2.CaptureResult;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -43,13 +44,23 @@ public class Keyboard {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     return false;
                 }
-                if (keyCode == KeyEvent.KEYCODE_DEL) {
-                    RestClient.getApi().keyboardKeyAction(Dictonary.dictonary.get(KeyEvent.KEYCODE_DEL), CLICK);
+                if (keyCode == KeyEvent.KEYCODE_DEL && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    RestClient.getApi().keyboardKeyAction(Dictonary.dictonary.get(KeyEvent.KEYCODE_DEL), DOWN).enqueue(new Callback<MousePosition>() {
+                        @Override
+                        public void onResponse(Call<MousePosition> call, Response<MousePosition> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<MousePosition> call, Throwable t) {
+
+                        }
+                    });
                     return false;
                 }
 
                 debugTextView.setText(KeyEvent.keyCodeToString(keyCode));
-                return true;
+                return false;
             }
         });
     }
