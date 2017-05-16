@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 
 import net.mindwalkers.control.keyboard_control.KeyboardWrite;
 import net.mindwalkers.control.mouse_control.MousePosition;
+
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,12 +27,31 @@ public class Keyboard {
     public boolean     isKeyboardHidden = true;
     private String TAG = "Keyboard";
 
-    public Keyboard(Context context, TextView debugTextView, View view, EditText editText) {
+    public static final String CLICK = "click";
+    public static final String DOWN = "down";
+    public static final String UP = "up";
+
+    public Keyboard(Context context, TextView debugTextView1, View view, EditText editText) {
         this.context = context;
-        this.debugTextView = debugTextView;
+        this.debugTextView = debugTextView1;
         this.inputView = view;
         this.keyboardEditText = editText;
         keyboardEditText.addTextChangedListener(new OnChangeTextListener(this, keyboardEditText));
+        keyboardEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    return false;
+                }
+                if (keyCode == KeyEvent.KEYCODE_DEL) {
+                    RestClient.getApi().keyboardKeyAction(Dictonary.dictonary.get(KeyEvent.KEYCODE_DEL), CLICK);
+                    return false;
+                }
+
+                debugTextView.setText(KeyEvent.keyCodeToString(keyCode));
+                return true;
+            }
+        });
     }
 
     public  void toggleKeyboard() {
@@ -85,7 +107,6 @@ public class Keyboard {
                     }
                 });
                 editText.getText().clear();
-                //editText.setText("");
             }
         }
 

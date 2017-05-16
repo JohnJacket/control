@@ -96,18 +96,6 @@ public class TouchPad {
                 return true;
             }
         });
-
-
-        touchPadObject.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    return false;
-                }
-                debugTextView.setText(KeyEvent.keyCodeToString(keyCode));
-                return true;
-            }
-        });
     }
 
     public ImageView getTouchPadObject() {
