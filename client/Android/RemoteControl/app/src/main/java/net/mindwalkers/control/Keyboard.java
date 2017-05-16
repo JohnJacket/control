@@ -22,6 +22,7 @@ public class Keyboard {
     private View        inputView;
     private EditText    keyboardEditText;
     public boolean     isKeyboardHidden = true;
+    private String TAG = "Keyboard";
 
     public Keyboard(Context context, TextView debugTextView, View view, EditText editText) {
         this.context = context;
@@ -48,6 +49,8 @@ public class Keyboard {
 
     public void show() {
         debugTextView.setText("Show keyboard");
+        if (inputView == null)
+            Log.d(TAG, "inputView == null");
         InputMethodManager im = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         im.showSoftInput(inputView, InputMethodManager.SHOW_IMPLICIT);
         isKeyboardHidden = false;

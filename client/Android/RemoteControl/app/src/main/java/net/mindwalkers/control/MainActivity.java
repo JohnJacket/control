@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //TODO: Can you add showing keyboard here?
-        //touchPad.getTouchPadObject().setFocusableInTouchMode(true);
-        //touchPad.getTouchPadObject().requestFocus();
+        findViewById(R.id.keyboardEditText).setFocusableInTouchMode(true);
+        findViewById(R.id.keyboardEditText).requestFocus();
         //keyboard.toggleKeyboard();
     }
 
