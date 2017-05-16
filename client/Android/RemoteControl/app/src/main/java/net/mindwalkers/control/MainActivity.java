@@ -4,16 +4,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,27 +28,51 @@ public class MainActivity extends AppCompatActivity {
     MouseButton leftMouseButton, rightMouseButton;
     TouchPad touchPad;
     TextView debugTextView;
+    private Keyboard keyboard;
     public RestClient client;
-    private boolean isKeyboardHidden = true;
+    private String TAG = "TEST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         createToolbar();
         runClient();
         createView();
+        final View activityRootView = findViewById(R.id.activity_main);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                activityRootView.getWindowVisibleDisplayFrame(r);
+                int screenHeight = activityRootView.getRootView().getHeight();
+
+                int keypadHeight = screenHeight - r.bottom;
+
+                Log.d(TAG, "keypadHeight = " + keypadHeight);
+
+                if(keypadHeight > screenHeight * 0.15) {
+                    keyboard.isKeyboardHidden = false;
+                }
+                else {
+                    keyboard.isKeyboardHidden = true;
+                }
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        //TODO: Can you add showing keyboard here?
+        findViewById(R.id.keyboardEditText).setFocusableInTouchMode(true);
+        findViewById(R.id.keyboardEditText).requestFocus();
+        //keyboard.toggleKeyboard();
     }
 
     @Override
     protected void onStop() {
-        toggleKeyboard(false);
+        keyboard.hide();
         super.onStop();
     }
 
@@ -60,17 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void createView() {
         debugTextView = (TextView)findViewById(R.id.debugTextView);
-        touchPad = new TouchPad(this, (ImageView)findViewById(R.id.touchPad), debugTextView, client);
+        keyboard = new Keyboard(this, (TextView)findViewById(R.id.debugTextView), findViewById(R.id.keyboardEditText), (EditText) findViewById(R.id.keyboardEditText));
+        touchPad = new TouchPad(this, (ImageView)findViewById(R.id.touchPad), debugTextView, client, keyboard);
         leftMouseButton = new MouseButton(this, (Button)findViewById(R.id.leftButton), MouseButton.LEFT, debugTextView, client);
         rightMouseButton = new MouseButton(this, (Button)findViewById(R.id.rightButton), MouseButton.RIGHT, debugTextView, client);
-
-        findViewById(R.id.touchPad).setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                debugTextView.setText(KeyEvent.keyCodeToString(keyCode));
-                return true;
-            }
-        });
     }
 
     @Override
@@ -94,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.action_keyboard: {
-                toggleKeyboard();
+                keyboard.toggleKeyboard();
                 break;
             }
             case R.id.action_power_panel: {
@@ -108,33 +129,27 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void toggleKeyboard(boolean forceToggleValue) {
-        if (forceToggleValue) {
-            debugTextView.setText("Show keyboard");
-            InputMethodManager im = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            im.showSoftInput(touchPad.getTouchPadObject(), InputMethodManager.SHOW_IMPLICIT);
-            isKeyboardHidden = false;
-        }
-        else {
-            debugTextView.setText("Hide keyboard");
-            ((InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(touchPad.getTouchPadObject().getWindowToken(), 0);
-            isKeyboardHidden = true;
-        }
-    }
-
-    public  void toggleKeyboard() {
-        //isKeyboardHidden = !isKeyboardHidden;
-        toggleKeyboard(isKeyboardHidden);
-    }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
+    /*
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.i(TAG, "onKeyDown()");
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (!keyboard.isKeyboardHidden)
+                keyboard.isKeyboardHidden = false;
+            debugTextView.setText("Hide keyboard");
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    */
+
     @Override
     public void onBackPressed() {
-        isKeyboardHidden = false;
+        Log.i(TAG, "onBackPressed()");
         super.onBackPressed();
     }
 }
