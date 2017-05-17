@@ -31,11 +31,20 @@ public class MainActivity extends AppCompatActivity {
     private Keyboard keyboard;
     public RestClient client;
     private String TAG = "TEST";
+    private String serverName = "Server";
+    private String serverAddress = "Address";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            serverName = bundle.getString("serverName");
+            serverAddress = bundle.getString("serverAddress");
+        }
+        Log.d(TAG, serverAddress);
+
         createToolbar();
         runClient();
         createView();
@@ -67,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Can you add showing keyboard here?
         findViewById(R.id.keyboardEditText).setFocusableInTouchMode(true);
         findViewById(R.id.keyboardEditText).requestFocus();
-        //keyboard.toggleKeyboard();
     }
 
     @Override
