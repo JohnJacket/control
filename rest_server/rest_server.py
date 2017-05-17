@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, make_response, request, abort
 import platform
+import threading
+import time
+import socket
 import win32control
 import common_control
 
@@ -8,7 +11,7 @@ app = Flask(__name__)
 
 @app.route('/system-info', methods=['GET'])
 def get_system_info():
-    return jsonify({'OS': platform.system(), 'Release': platform.release(), 'Machine': platform.machine(), 'Platform': platform.platform(), 'Uname': platform.uname()})
+    return jsonify({'OS': platform.system(), 'Release': platform.release(), 'Node': platform.node()})
 
 
 @app.route('/mouse/position', methods=['GET'])
@@ -77,5 +80,16 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
+def discovery_service():
+    port = 5000
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind(('', port))
+    while True:
+        data, addr = s.recvfrom(1024)
+        if (data == 'Hey'):
+            s.sendto('Hey', addr)
+
 if __name__ == '__main__':
+    thread_ = threading.Thread(target=discovery_service())
+    thread_.start()
     app.run(host='0.0.0.0')
