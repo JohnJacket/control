@@ -89,7 +89,8 @@ def discovery_service():
         if (data == 'Hey'):
             s.sendto('Hey', addr)
 
+
 if __name__ == '__main__':
-    thread_ = threading.Thread(target=discovery_service())
+    thread_ = threading.Thread(target=discovery_service)
     thread_.start()
     app.run(host='0.0.0.0')
