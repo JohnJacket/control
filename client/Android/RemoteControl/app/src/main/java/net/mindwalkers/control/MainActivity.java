@@ -29,10 +29,15 @@ public class MainActivity extends AppCompatActivity {
     TouchPad touchPad;
     TextView debugTextView;
     private Keyboard keyboard;
+    private boolean isHttps = false;
     public RestClient client;
     private String TAG = "TEST";
     private String serverName = "Server";
     private String serverAddress = "Address";
+    public static final String HTTPPrefix = "http://";
+    public static final String HTTPSPrefix = "https://";
+    public static final String PortPrefix = ":";
+    public static final int ServerRestAPIPort = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +48,13 @@ public class MainActivity extends AppCompatActivity {
             serverName = bundle.getString("serverName");
             serverAddress = bundle.getString("serverAddress");
         }
-        Log.d(TAG, serverAddress);
 
+        Log.d(TAG, serverAddress);
+        if (!isHttps)
+            serverAddress = HTTPPrefix + serverAddress + PortPrefix + String.valueOf(ServerRestAPIPort);
+        else
+            serverAddress = HTTPSPrefix + serverAddress + PortPrefix + String.valueOf(ServerRestAPIPort);
+        
         createToolbar();
         runClient();
         createView();
@@ -90,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void runClient() {
-        RestServer server = new RestServer("http://192.168.112.152:5000/", "Server");
+        RestServer server = new RestServer(serverAddress, serverName);
         client = new RestClient(server);
     }
 

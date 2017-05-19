@@ -47,7 +47,7 @@ public class ServerListAdapter extends BaseAdapter {
         }
 
         holder.serverNameView.setText(listData.get(position).getName());
-        holder.serverAddressView.setText(listData.get(position).getAddress());
+        holder.serverAddressView.setText("[" + listData.get(position).getAddress() + "]");
         return convertView;
     }
 

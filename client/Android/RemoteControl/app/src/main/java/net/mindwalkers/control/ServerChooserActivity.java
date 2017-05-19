@@ -26,7 +26,7 @@ public class ServerChooserActivity extends AppCompatActivity {
         setContentView(R.layout.server_chooser);
         createToolbar();
         final ArrayList<RestServer> servers = new ArrayList<RestServer>();
-        RestServer server = new RestServer("http://192.168.112.152:5000/", "TestServer");
+        RestServer server = new RestServer("192.168.112.152", "TestServer");
         servers.add(server);
         serverListView = (ListView) findViewById(R.id.serverListView);
         serverListView.setAdapter(new ServerListAdapter(this, servers));
