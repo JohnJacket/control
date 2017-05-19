@@ -6,9 +6,9 @@ Server and client for control PC's mouse, keyboard and do some quick operations 
 * Mouse control support by server
 * Android client with mouse and keyboard control support
 * Keyboard control support by server
+* Service discovery
 
 ### In development
-* Service discovery
 * PC's control panel
 * Server as service with some sort of settings
 * Fullscreen keyboard in landscape mode
