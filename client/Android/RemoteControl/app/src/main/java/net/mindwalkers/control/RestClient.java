@@ -12,7 +12,7 @@ public class RestClient {
         this.server = server;
 
         retrofit = new Retrofit.Builder()
-                .baseUrl(this.server.address)
+                .baseUrl(this.server.getAddress())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         remoteControlApi = retrofit.create(RemoteControlApi.class);

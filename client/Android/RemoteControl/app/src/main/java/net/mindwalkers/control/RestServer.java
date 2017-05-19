@@ -2,18 +2,31 @@ package net.mindwalkers.control;
 
 
 public class RestServer {
-    public String name;
-    public String address;
+    private String name;
+    private String address;
     private String hash;
 
     RestServer(String address, String name){
         this.address = address;
         this.name = name;
+        this.hash = "";
     }
-    public void SetPassw (String password) {
-        // get hash from password
+
+    public String getName() {
+        return name;
     }
-    public String GetHash () {
+
+    public void setName(String name) { this.name = name; }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setPassw (String pass) {
+        // get hash from pass
+    }
+
+    public String getHash () {
         return hash;
     }
 }
