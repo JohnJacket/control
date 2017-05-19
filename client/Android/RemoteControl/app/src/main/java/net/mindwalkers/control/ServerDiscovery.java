@@ -26,6 +26,7 @@ public class ServerDiscovery extends Thread {
             serverDiscoveryListener = new ServerDiscoveryListener(context, new ServerDiscoveryListener.BroadcastListener() {
                 @Override
                 public void onReceive(String msg, String ip) {
+                    Log.d(hey, msg);
                     if (msg.startsWith(hey) && !ips.contains(ip)) {
                         ips.add(ip);
                         String name = msg.substring(msg.indexOf(":")+1);

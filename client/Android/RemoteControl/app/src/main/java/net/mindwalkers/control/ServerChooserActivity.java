@@ -65,4 +65,10 @@ public class ServerChooserActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_server_chooser, menu);
         return true;
     }
+
+    @Override
+    protected void onStop() {
+        serverDiscovery.end();
+        super.onStop();
+    }
 }

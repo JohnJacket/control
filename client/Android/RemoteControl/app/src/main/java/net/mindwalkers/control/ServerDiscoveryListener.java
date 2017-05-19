@@ -3,6 +3,7 @@ package net.mindwalkers.control;
 import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -38,7 +39,7 @@ public class ServerDiscoveryListener extends Thread {
         }
         while (!socket.isClosed()) {
             try {
-                byte[] buffer = new byte[128];
+                byte[] buffer = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
                 listener.onReceive(
