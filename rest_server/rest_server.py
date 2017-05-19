@@ -87,7 +87,7 @@ def discovery_service():
     while True:
         data, addr = s.recvfrom(1024)
         if (data == 'Hey'):
-            s.sendto('Hey', addr)
+            s.sendto('Hey:' + platform.node(), addr)
 
 
 if __name__ == '__main__':
