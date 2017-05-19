@@ -30,8 +30,8 @@ public class ServerChooserActivity extends AppCompatActivity {
         //servers.add(server);
         serverDiscovery = new ServerDiscovery(this, new ServerDiscovery.DiscoveredEventListener() {
             @Override
-            public void onReceive(String ip) {
-                RestServer serv = new RestServer(ip, "TEST");
+            public void onReceive(String ip, String name) {
+                RestServer serv = new RestServer(ip, name);
                 servers.add(serv);
             }
         });

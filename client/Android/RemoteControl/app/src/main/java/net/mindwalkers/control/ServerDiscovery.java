@@ -1,6 +1,7 @@
 package net.mindwalkers.control;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -25,9 +26,10 @@ public class ServerDiscovery extends Thread {
             serverDiscoveryListener = new ServerDiscoveryListener(context, new ServerDiscoveryListener.BroadcastListener() {
                 @Override
                 public void onReceive(String msg, String ip) {
-                    if (msg.equals(hey) && !ips.contains(ip)) {
+                    if (msg.startsWith(hey) && !ips.contains(ip)) {
                         ips.add(ip);
-                        listener.onReceive(ip);
+                        String name = msg.substring(msg.indexOf(":")+1);
+                        listener.onReceive(ip, name);
                     }
 
                 }
@@ -47,7 +49,7 @@ public class ServerDiscovery extends Thread {
         }
     }
     public interface DiscoveredEventListener {
-        public void onReceive(String ip);
+        public void onReceive(String ip, String name);
     }
 
     public List<String> getIps() {
