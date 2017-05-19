@@ -86,8 +86,10 @@ def discovery_service():
     s.bind(('', port))
     while True:
         data, addr = s.recvfrom(1024)
-        if (data == 'Hey'):
-            s.sendto('Hey:' + platform.node(), addr)
+        bytedata = data.decode("utf-8")
+        if (bytedata == 'Hey'):
+            response_message = 'Hey:' + platform.node()
+            s.sendto(response_message.encode("utf-8"), addr)
 
 
 if __name__ == '__main__':
