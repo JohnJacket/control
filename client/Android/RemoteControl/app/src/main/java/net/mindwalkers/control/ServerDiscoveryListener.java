@@ -2,7 +2,9 @@ package net.mindwalkers.control;
 
 import android.content.Context;
 import android.net.DhcpInfo;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import java.io.IOException;
@@ -42,9 +44,14 @@ public class ServerDiscoveryListener extends Thread {
                 byte[] buffer = new byte[1024];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
-                listener.onReceive(
-                        new String(packet.getData(), 0, packet.getLength()),
-                        packet.getAddress().getHostAddress());
+                WifiManager wifiMgr = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+                int ip = wifiInfo.getIpAddress();
+                String ipAddress = Formatter.formatIpAddress(ip);
+                if (!packet.getAddress().getHostAddress().equals(ipAddress))
+                    listener.onReceive(
+                            new String(packet.getData(), 0, packet.getLength()),
+                            packet.getAddress().getHostAddress());
             } catch (IOException e) {
                 e.printStackTrace();
             }
