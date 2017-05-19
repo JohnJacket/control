@@ -7,39 +7,47 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ServerDiscoverySender extends Thread {
+public class ServerDiscovery extends Thread {
     private boolean running;
+    private DiscoveredEventListener listener;
     private List<String> ips = Collections.synchronizedList(new LinkedList<String>());
     private Context context;
-    private ServerDiscoveryListener serverDiscovery;
+    private ServerDiscoveryListener serverDiscoveryListener;
     private static final String hey = "Hey";
-    public ServerDiscoverySender(Context context) {
+    public ServerDiscovery(Context context, DiscoveredEventListener listener) {
+        this.listener = listener;
         this.context = context;
     }
 
     @Override
     public void run() {
         try {
-            serverDiscovery = new ServerDiscoveryListener(context, new ServerDiscoveryListener.BroadcastListener() {
+            serverDiscoveryListener = new ServerDiscoveryListener(context, new ServerDiscoveryListener.BroadcastListener() {
                 @Override
                 public void onReceive(String msg, String ip) {
-                    if (msg.equals(hey) && !ips.contains(ip))
+                    if (msg.equals(hey) && !ips.contains(ip)) {
                         ips.add(ip);
+                        listener.onReceive(ip);
+                    }
+
                 }
             });
-            serverDiscovery.start();
+            serverDiscoveryListener.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
         running = true;
         while (running) {
             try {
-                serverDiscovery.send(hey);
+                serverDiscoveryListener.send(hey);
                 sleep(1000);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+    public interface DiscoveredEventListener {
+        public void onReceive(String ip);
     }
 
     public List<String> getIps() {
@@ -48,6 +56,6 @@ public class ServerDiscoverySender extends Thread {
 
     public void end() {
         running = false;
-        serverDiscovery.end();
+        serverDiscoveryListener.end();
     }
 }

@@ -3,6 +3,7 @@ package net.mindwalkers.control;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -34,27 +35,44 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "TEST";
     private String serverName = "Server";
     private String serverAddress = "Address";
+    public static final String SERVER_PREFERENCES = "serverPreferences";
+    public static final String SERVER_NAME_DEF = "Server";
+    public static final String SERVER_ADDRESS_DEF = "Address";
+    public static final String SERVER_IP = "serverIP";
+    public static final String SERVER_NAME = "serverName";
     public static final String HTTPPrefix = "http://";
     public static final String HTTPSPrefix = "https://";
     public static final String PortPrefix = ":";
     public static final int ServerRestAPIPort = 5000;
+    public static final double KeyboardHiddenK = 0.15;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences settings = this.getSharedPreferences(SERVER_PREFERENCES, MODE_PRIVATE);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             serverName = bundle.getString("serverName");
             serverAddress = bundle.getString("serverAddress");
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(SERVER_IP, serverAddress);
+            editor.putString(SERVER_NAME, serverAddress);
+            editor.apply();
+        }
+        else {
+            serverAddress = settings.getString(SERVER_IP, SERVER_ADDRESS_DEF);
+            serverName = settings.getString(SERVER_NAME, SERVER_NAME_DEF);
         }
 
         Log.d(TAG, serverAddress);
-        if (!isHttps)
-            serverAddress = HTTPPrefix + serverAddress + PortPrefix + String.valueOf(ServerRestAPIPort);
-        else
-            serverAddress = HTTPSPrefix + serverAddress + PortPrefix + String.valueOf(ServerRestAPIPort);
-        
+        if (!serverAddress.startsWith("http") && !serverAddress.equals(SERVER_ADDRESS_DEF)) {
+            if (!isHttps)
+                serverAddress = HTTPPrefix + serverAddress + PortPrefix + String.valueOf(ServerRestAPIPort);
+            else
+                serverAddress = HTTPSPrefix + serverAddress + PortPrefix + String.valueOf(ServerRestAPIPort);
+        }
+
         createToolbar();
         runClient();
         createView();
@@ -70,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d(TAG, "keypadHeight = " + keypadHeight);
 
-                if(keypadHeight > screenHeight * 0.15) {
+                if(keypadHeight > screenHeight * KeyboardHiddenK) {
                     keyboard.isKeyboardHidden = false;
                 }
                 else {
@@ -78,6 +96,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     @Override

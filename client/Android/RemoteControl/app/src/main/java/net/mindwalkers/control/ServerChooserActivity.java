@@ -19,15 +19,24 @@ public class ServerChooserActivity extends AppCompatActivity {
     private ListView serverListView;
     final ArrayList<RestServer> servers = new ArrayList<RestServer>();
     private String TAG = "ServerChooserActivity";
-
+    private ServerDiscovery serverDiscovery;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.server_chooser);
         createToolbar();
         final ArrayList<RestServer> servers = new ArrayList<RestServer>();
-        RestServer server = new RestServer("192.168.112.152", "TestServer");
-        servers.add(server);
+        //RestServer server = new RestServer("192.168.112.152", "TestServer");
+        //servers.add(server);
+        serverDiscovery = new ServerDiscovery(this, new ServerDiscovery.DiscoveredEventListener() {
+            @Override
+            public void onReceive(String ip) {
+                RestServer serv = new RestServer(ip, "TEST");
+                servers.add(serv);
+            }
+        });
+        serverDiscovery.start();
+
         serverListView = (ListView) findViewById(R.id.serverListView);
         serverListView.setAdapter(new ServerListAdapter(this, servers));
         serverListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
