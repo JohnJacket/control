@@ -10,6 +10,8 @@ Server and client for control PC's mouse, keyboard and do some quick operations 
 ### In development
 * Service discovery
 * PC's control panel
+* Server as service with some sort of settings
+* Fullscreen keyboard in landscape mode
 * Server on Linux and Mac
 
 ## Server
@@ -33,6 +35,7 @@ Supports mouse and keyboard control operations
 ### Server keyboard operations
 	KeyboardWrite(string text) : '/keyboard/write' [POST]
 	KeyboardKeyAction(string key, string action = click) : '/keyboard/<key>/<action>' [GET]
+		<action> - click, down, up
 	
 ## Client
 Android client on Java.
