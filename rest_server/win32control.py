@@ -107,6 +107,21 @@ def kbd_key_up(key):
     return True
 
 
+def system_command(command):
+    if command == 'info':
+        return True
+    elif command == 'reboot':
+        win32api.InitiateSystemShutdown(None, 'Reboot', 5, 1, 1)
+        return True
+    elif command == 'shutdown':
+        win32api.InitiateSystemShutdown(None, 'Shutdown', 5, 1, 0)
+        return True
+    elif command == 'sleep':
+        return True
+    else:
+        return False
+
+
 def translate_to_win32(button):
     if button == Constant.LEFT_MOUSE_BUTTON:
         return win32con.MOUSEEVENTF_LEFTDOWN

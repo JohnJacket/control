@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, make_response, request, abort
+from uuid import getnode as get_mac
 import platform
 import threading
 import time
@@ -7,11 +8,6 @@ import win32control
 import common_control
 
 app = Flask(__name__)
-
-
-@app.route('/system-info', methods=['GET'])
-def get_system_info():
-    return jsonify({'OS': platform.system(), 'Release': platform.release(), 'Node': platform.node()})
 
 
 @app.route('/mouse/position', methods=['GET'])
@@ -66,6 +62,20 @@ def kbd_write():
 @app.route('/keyboard/<key>/<action>', methods=['GET'])
 def kbd_key_action(key, action = 'click'):
     if not common_control.kbd_key_action(key, action):
+        abort(400)
+    return 'Success', 200
+
+
+@app.route('/system/<command>', methods=['GET'])
+def system_command(command):
+    if command == 'mac':
+        address = get_mac()
+        h = iter(hex(address)[2:].zfill(12))
+        mac = ":".join(i + next(h) for i in h)
+        return jsonify({'MAC': mac})
+    elif command == 'info':
+        return jsonify({'OS': platform.system(), 'Release': platform.release(), 'Node': platform.node()})
+    elif not common_control.system_command(command):
         abort(400)
     return 'Success', 200
 

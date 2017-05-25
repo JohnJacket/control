@@ -17,3 +17,10 @@ def kbd_key_action(key, action):
         return win32control.kbd_key_action(key, action)
     else:
         return False
+
+
+def system_command(command):
+    if platform.system() == 'Windows':
+        return win32control.system_command(command)
+    else:
+        return False

@@ -6,9 +6,9 @@ Server and client for control PC's mouse, keyboard and do some quick operations 
 * Mouse control support by server
 * Android client with mouse and keyboard control support
 * Keyboard control support by server
+* Service discovery
 
 ### In development
-* Service discovery
 * PC's control panel
 * Server as service with some sort of settings
 * Fullscreen keyboard in landscape mode
@@ -21,8 +21,11 @@ Supports mouse and keyboard control operations
 ### Supported platforms:
 * Windows.
 
-### Server common operations
-	SystemInfo() : '/system-info' [GET]
+### Server system operations
+	SystemInfo() : '/system/info' [GET]
+	SystemMac() : '/system/mac' [GET]
+	SystemReboot() : '/system/reboot' [GET]
+	SystemShutdown() : '/system/shutdown' [GET]
 	
 ### Server mouse operations
 	MouseMove (int x, int y, int speed = 0) : '/mouse/move' [POST]
